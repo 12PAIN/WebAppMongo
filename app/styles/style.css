@@ -1,0 +1,192 @@
+body {
+    background-color: #f5f5f5;
+    height: 100%;
+    width: 100%     ;
+}
+
+.div-loginForm {
+    background-color: #A2FF93;
+
+    display: flex;
+    flex-wrap: wrap;
+
+    max-height: fit-content;
+    width: fit-content;
+    max-width: 300px;
+    
+    scale: 1.3;
+
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    padding: 15px;
+    justify-content: space-around;
+
+    box-shadow: 2px 3px 2px rgba(0, 0, 0, 0.295);
+
+    border-radius: 3px;
+}
+
+p {
+    max-width: 600px;
+}
+
+.WrapCenteredInlineBlock {
+    display: inline-block;
+}
+
+.mainMenu {
+
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 14px;
+    gap: 10px;
+
+    position: fixed;
+    width: fit-content;
+    height: fit-content;
+    top: 2%;
+    left: 1%;
+
+    background: #A2FF93;
+    mix-blend-mode: normal;
+    border-radius: 10px;
+
+    box-shadow: 2px 3px 2px rgba(0, 0, 0, 0.295);
+
+}
+
+table, th, td, tr{
+    border:1px solid;
+    border-collapse: collapse;
+    padding: 10px;
+    gap: 12px;
+    max-height: 586px;
+}
+
+table {
+    overflow-y:auto;
+    max-height: 600px;
+    height: fit-content;
+}
+
+
+
+.productList {
+    
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 14px;
+    gap: 10px;
+
+    
+
+    position: fixed;
+    width: fit-content;
+    height: fit-content;
+    max-height: 600px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-60%, -60%);
+
+
+    background: #A2FF93;
+    mix-blend-mode: normal;
+    border-radius: 10px;
+
+    box-shadow: 2px 3px 2px rgba(0, 0, 0, 0.295);
+}
+
+.productListAdd{
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+}
+
+.productListAddInput{
+    max-width: 95px;
+    width: fit-content;
+}
+
+.menuListItem:hover {
+    text-decoration: underline #000000;    
+}
+
+.ExitButton {
+    position: fixed;
+    top: 2%;
+    background-color:#A2FF93;
+    left: 95%;
+    transform: translate(-50%, -50%);
+}
+
+.SalesPageButton {
+    position: fixed;
+    top: 2%;
+    background-color:#A2FF93;
+    left: 90%;
+    transform: translate(-50%, -50%);
+}
+
+.div-twoButtonsContainer {
+    display: flex;
+    flex: auto;
+    margin: 0 auto;
+    justify-content: space-around;
+}
+
+.div-LoginError {
+    display: flex; 
+    width: 150px; 
+    justify-content: space-around; 
+    flex:auto; color: red; 
+    font-size: 0.8em; 
+    font-weight: bold;
+}
+
+.div-LoginWarning {
+    display: flex; 
+    width: 150px; 
+    justify-content: space-around; 
+    flex:auto; color: blue; 
+    font-size: 0.8em; 
+    font-weight: bold;
+}
+
+.saleFormMainWrapper{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #00000070;
+}
+
+.divHelloUser{
+    background-color: #A2FF93;
+
+    display: flex;
+    flex-wrap: wrap;
+
+    max-height: fit-content;
+    width: fit-content;
+    max-width: 300px;
+    
+    font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif; font-size: 15px;
+
+    position: fixed;
+    top: 1%;
+    left: 1%;
+
+    padding: 3px;
+    justify-content: space-around;
+
+    box-shadow: 2px 3px 2px rgba(0, 0, 0, 0.295);
+
+    border-radius: 4px;
+}

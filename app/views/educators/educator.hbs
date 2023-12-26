@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Преподаватель {{educator.lastName}}</title>
+    <link href="style.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <div>
+        <h2>{{educator.lastName}} {{educator.firstName}} {{educator.middleName}}</h2>
+        <h4>{{educator.department.name}}</h4>
+        
+    </div>
+
+    <div>
+        {{#if educator.isAspirant}}
+            <p>Аспирант: да</p>
+        {{/if}}
+        <p>Пол: {{educator.gender}}</p>
+        <p>Дата рождения: {{dateFormat educator.birthDate "DD.MM.YYYY"}}</p>
+        <p>Категория: {{educator.category}}</h4>
+        <p>Должность: {{educator.title}}</h4>
+        <p>Зарплата: {{educator.salary}}</h4>
+        {{#in "kidsCount" educator}}
+            <p>Дети: {{educator.kidsCount}}</p>
+        {{/in}}
+    </div>
+
+    <div style="display:flex; flex-direction:row;">
+        <h3>Диссертации </h3>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addDissertationModal">
+            Добавить
+        </button>
+    </div>
+    {{#in "dissertations" educator}}
+        {{#each educator.dissertations as |dissertation|}}
+            <div style="display:flex; flex-direction:row;">
+                <p>{{dissertation.type}}&nbsp;</p>
+                <p>Тема: {{dissertation.theme}}&nbsp;</p>
+                <p>Дата защиты: {{dateFormat dissertaton.dateOfDefense "DD.MM.YYYY"}}</p>
+            </div>
+        {{/each}}
+    {{/in}}
+
+    {{#if (or 
+        (eq educator.category "Доцент")
+        (eq educator.category "Ст. Преподаватель")
+        (eq educator.category "Профессор"))}}
+        <div>
+            <div style="display:flex; flex-direction:row;">
+                <h3>Научные темы </h3>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addScinceThemeModal">
+                    Добавить
+                </button>
+            </div>
+            
+            {{#each educator.scinceThemes as |theme|}}
+                <p>{{theme}}</p>
+            {{/each}}
+        </div>
+    {{/if}}
+
+    {{#if (eq educator.category "Профессор")}}
+        <div>
+            <div style="display:flex; flex-direction:row;">
+                <h3>Научные направления:</h3>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addScinceDirectionModal">
+                    Добавить
+                </button>
+            </div>
+            {{#each educator.scinceDirections as |direction|}}
+                <p>{{direction}}</p>
+            {{/each}}
+        </div>
+    {{/if}}
+
+
+    <div class="modal fade" id="addDissertationModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Добавить диссертацию</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+
+            <div style="display: flex; flex-direction:column;">
+                <input style="max-width: 600px; margin: 0.3rem;" placeholder="Тема" type="text" id="theme" required>
+
+                <label style="align-self: self-start; max-width: 600px; margin: 0.3rem;">Тип</label>
+                <select style="max-width: 600px; margin: 0.3rem;" id="type" name="type">
+                    <option value="Кандидатская диссертация">Кандидатская диссертация</option>
+                    {{#if (or (eq educator.category "Профессор") (eq educator.category "Доцент"))}}
+                        <option value="Докторская диссертация">Докторская диссертация</option>
+                    {{/if}}
+                </select>
+
+                <label style="align-self: self-start; max-width: 600px; margin: 0.3rem;">Дата защиты</label>
+                <input style="max-width: 600px; margin: 0.3rem;" type="date" id="dateOfDefense" required>
+                
+                
+            </div>
+            
+        </div>
+        <div class="modal-footer bg-light">
+            <button id="addDisertation" type="button" class="btn" data-dismiss="modal">Сохранить</button>
+            <button type="button" class="btn  btn-outline-secondary" data-dismiss="modal">Закрыть</button>
+        </div>
+        </div>
+    </div>
+    </div>
+
+    <div class="modal fade" id="addScinceDirectionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Добавить направление</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+
+            <div style="display: flex; flex-direction:column;">
+                <input style="max-width: 600px; margin: 0.3rem;" placeholder="Направление" type="text" id="scinceDirection" required>
+            </div>
+            
+        </div>
+        <div class="modal-footer bg-light">
+            <button id="addDirection" type="button" class="btn" data-dismiss="modal">Сохранить</button>
+            <button type="button" class="btn  btn-outline-secondary" data-dismiss="modal">Закрыть</button>
+        </div>
+        </div>
+    </div>
+    </div>
+
+    <div class="modal fade" id="addScinceThemeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Добавить тему</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+
+            <div style="display: flex; flex-direction:column;">
+                <input style="max-width: 600px; margin: 0.3rem;" placeholder="Тема" type="text" id="scinceTheme" required>
+            </div>
+            
+        </div>
+        <div class="modal-footer bg-light">
+            <button id="addTheme" type="button" class="btn" data-dismiss="modal">Сохранить</button>
+            <button type="button" class="btn  btn-outline-secondary" data-dismiss="modal">Закрыть</button>
+        </div>
+        </div>
+    </div>
+    </div>
+
+<script>
+    jQuery(document).ready(function(){
+            
+        $("#addDisertation").on("click", async function(event){
+            
+
+            let theme = $("#theme").val();
+            let dateOfDefense = $("#dateOfDefense").val();
+            let type = $("#type").val();
+        
+            if (theme == "") return;
+            if (dateOfDefense == "") return;
+            if (type == "") return;
+
+            
+
+            let newData = {
+
+                dissertation:{
+                    theme: theme,
+                    dateOfDefense: new Date(dateOfDefense),
+                    type: type
+                }
+            }
+
+            let response = await fetch("/educators/" + "{{educator._id}}", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(newData)
+            });
+
+            location.reload();
+
+        });
+
+        $("#addDirection").on("click", async function(event){
+            
+
+            let scinceDirection = $("#scinceDirection").val();
+
+        
+            if (scinceDirection == "") return;            
+
+            let newData = {
+                scinceDirection:scinceDirection
+            }
+
+            let response = await fetch("/educators/" + "{{educator._id}}", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(newData)
+            });
+
+            location.reload();
+
+        });
+
+        $("#addTheme").on("click", async function(event){
+            
+
+            let scinceTheme = $("#scinceTheme").val();
+
+        
+            if (scinceTheme == "") return;            
+
+            let newData = {
+                scinceTheme:scinceTheme
+            }
+
+            let response = await fetch("/educators/" + "{{educator._id}}", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(newData)
+            });
+
+            location.reload();
+
+        });
+    });
+
+    
+</script>
+
+</body>

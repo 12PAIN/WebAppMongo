@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Группы</title>
+    <link href="style.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+</head>
+<body>
+    <h2>Группы:</h2>
+    
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createGroupModal">
+        Добавить группу
+    </button>
+
+
+    <div class="modal fade" id="createGroupModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Добавить группу</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+
+            <div style="display: flex; flex-direction:column;">
+
+                <input style="max-width: 600px; margin: 0.3rem;" placeholder="Название" type="text" id="name" required>
+
+                <label style="align-self: self-start; max-width: 600px; margin: 0.3rem;">Факультет</label>
+                <select style="max-width: 600px; margin: 0.3rem;" id="faculty" name="faculty">
+                    {{#each faculties as |faculty|}}
+                        <option value="{{faculty._id}}">{{faculty.name}}</option>
+                    {{/each}}
+                </select>
+
+                <label style="align-self: self-start; max-width: 600px; margin: 0.3rem;">Год набора</label>
+                <input style="max-width: 600px; margin: 0.3rem;" type="number" value="2023" id="enrollmentYear" required>
+                
+            </div>
+            
+        </div>
+        <div class="modal-footer bg-light">
+            <button id="createNewGroup" type="button" class="btn" data-dismiss="modal">Сохранить</button>
+            <button type="button" class="btn  btn-outline-secondary" data-dismiss="modal">Закрыть</button>
+        </div>
+        </div>
+    </div>
+    </div>
+    
+    <br>
+    <br>
+    
+    <table>
+        <tr>
+            <th>Факультет</th>
+            <th>Название</th>
+            <th>Год набора</th>
+            <th>Открыть</th>
+            <th>Удалить</th>
+        </tr>
+
+        {{#each groups as |group|}}
+            <tr>
+                <td>{{group.faculty.name}}</td>
+                <td>{{group.name}}</td>
+                <td>{{group.enrollmentYear}}</td>
+                <td>
+                    <a href="/groups/{{group._id}}">
+                        <button>Открыть</button>
+                    </a>
+                </td>
+                <td>
+                    <button name="toDeleteButton" toDeleteId="{{group._id}}">Удалить</button>
+                </td>
+            </tr>
+        {{/each}}
+
+    </table>
+
+    <script>
+
+        async function deleteOne(e){
+
+            let caller=e.target || e.srcElement;
+
+            let toDeleteId = caller.getAttribute('toDeleteId')
+            
+            await fetch("/groups/"+toDeleteId, {
+                method: "DELETE"
+            })
+
+            location.reload()
+        }
+
+        let deleteButtons = document.getElementsByName("toDeleteButton").forEach(
+            (btn)=>{btn.addEventListener("click", deleteOne)}
+        );
+
+
+        jQuery(document).ready(function(){
+            
+            $("#createNewGroup").on("click", async function(event){
+                
+
+                let faculty = $("#faculty").val();
+                let name = $("#name").val();
+                let enrollmentYear = $("#enrollmentYear").val();
+
+                if (faculty == "") return;
+                if (name == "") return;
+                if (enrollmentYear == "") return;
+                
+                enrollmentYear = parseInt(enrollmentYear);
+
+                let newGroup = {
+                    name: name,
+                    faculty: faculty,
+                    enrollmentYear: enrollmentYear
+                }
+
+                let response = await fetch("/groups", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(newGroup)
+                });
+
+                location.reload();
+
+            });
+        });
+
+    </script>
+    
+</body>

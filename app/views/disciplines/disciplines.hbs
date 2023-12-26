@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Дисциплины</title>
+    <link href="style.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+</head>
+<body>
+    <h2>Дисциплины:</h2>
+    
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createDisciplineModal">
+        Добавить дисциплину
+    </button>
+
+
+    <div class="modal fade" id="createDisciplineModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Добавить дисциплину</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+
+            <div style="display: flex; flex-direction:column;">
+                <input style="max-width: 600px; margin: 0.3rem;" placeholder="Название" type="text" id="name" required>
+
+                <label style="align-self: self-start; max-width: 600px; margin: 0.3rem;">Учебный год</label>
+                <input style="max-width: 600px; margin: 0.3rem;" type="number" id="schoolYear" required>
+
+                <label style="align-self: self-start; max-width: 600px; margin: 0.3rem;">Курс обучения</label>
+                <input style="max-width: 600px; margin: 0.3rem;" type="number" value="1" id="course" required>
+
+                <label style="align-self: self-start; max-width: 600px; margin: 0.3rem;">Семестр</label>
+                <select style="max-width: 600px; margin: 0.3rem;" id="semestr" name="semestr">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                </select>
+
+                <label style="align-self: self-start; max-width: 600px; margin: 0.3rem;">Форма контроля</label>
+                <select style="max-width: 600px; margin: 0.3rem;" id="controlForm" name="controlForm">
+                    <option value="Зачёт">Зачёт</option>
+                    <option value="Экзамен">Экзамен</option>
+                </select>
+                
+            </div>
+            
+        </div>
+        <div class="modal-footer bg-light">
+            <button id="createNewDiscipline" type="button" class="btn" data-dismiss="modal">Сохранить</button>
+            <button type="button" class="btn  btn-outline-secondary" data-dismiss="modal">Закрыть</button>
+        </div>
+        </div>
+    </div>
+    </div>
+    
+    <br>
+    <br>
+    
+    <table>
+        <tr>
+            <th>Название</th>
+            <th>Курс</th>
+            <th>Семестр</th>
+            <th>Учебный год</th>
+            <th>Форма контроля</th>
+            <th>Открыть</th>
+            <th>Удалить</th>
+        </tr>
+
+        {{#each disciplines as |discipline|}}
+            <tr>
+                <td>{{discipline.name}}</td>
+                <td>{{discipline.course}}</td>
+                <td>{{discipline.semestr}}</td>
+                <td>{{discipline.schoolYear}}</td>
+                <td>{{discipline.controlForm}}</td>
+                <td>
+                    <a href="/disciplines/{{discipline._id}}">
+                        <button>Открыть</button>
+                    </a>
+                </td>
+                <td>
+                    <button name="toDeleteButton" toDeleteId="{{discipline._id}}">Удалить</button>
+                </td>
+            </tr>
+        {{/each}}
+
+    </table>
+
+    <script>
+
+        async function deleteOne(e){
+
+            let caller=e.target || e.srcElement;
+
+            let toDeleteId = caller.getAttribute('toDeleteId')
+            
+            await fetch("/disciplines/"+toDeleteId, {
+                method: "DELETE"
+            })
+
+            location.reload()
+        }
+
+        let deleteButtons = document.getElementsByName("toDeleteButton").forEach(
+            (btn)=>{btn.addEventListener("click", deleteOne)}
+        );
+
+
+        jQuery(document).ready(function(){
+            
+            $("#createNewDiscipline").on("click", async function(event){
+                
+
+                let name = $("#name").val();
+                let semestr = $("#semestr").val();
+                let schoolYear = $("#schoolYear").val();
+                let course = $("#course").val();
+                let controlForm =  $("#controlForm").val();
+
+                if (name == "") return;
+                if (semestr == "") return;
+                if (schoolYear == "") return;
+                if (course == "") return;
+                if (controlForm == "") return;
+                
+                semestr = parseInt(semestr);
+                schoolYear = parseInt(schoolYear);
+                course = parseInt(course);
+
+                let newDiscipline = {
+                    name: name,
+                    course: course,
+                    controlForm: controlForm,
+                    semestr: semestr,
+                    schoolYear: schoolYear
+                }
+
+                let response = await fetch("/disciplines", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(newDiscipline)
+                });
+
+                location.reload();
+
+            });
+        });
+
+    </script>
+    
+</body>

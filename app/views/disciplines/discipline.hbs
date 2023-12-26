@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Дисциплина {{discipline.name}}</title>
+    <link href="style.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <div>
+        <h2>Дисциплина {{discipline.name}}</h2>
+        <h4>Ученый год: {{discipline.schoolYear}}, семестр {{discipline.semestr}}, курс {{discipline.course}}</h4>
+        <h4>Форма контроля: {{discipline.controlForm}}</h4>
+    </div>
+
+    <div>
+        <div style="display:flex; flex-direction:row;">
+            <h3>Распределение нагрузки преподавателей </h3>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addHoursModal">
+                Распределить
+            </button>
+        </div>
+
+        {{#each discipline.hoursAndEducators as |hoursAndEducator|}}
+            <div style="border: 1px solid;">
+                <p>Преподаватель: {{hoursAndEducator.educator.lastName}} {{hoursAndEducator.educator.firstName}} {{hoursAndEducator.educator.middleName}}</p>
+                <p>Тип занятия: {{hoursAndEducator.lessonsType}}, часы: {{hoursAndEducator.hours}}</p>
+            </div>
+            
+        {{/each}}
+    </div>
+
+
+
+    <div class="modal fade" id="addHoursModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Распределить часы</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+
+            <div style="display: flex; flex-direction:column;">
+                
+                <label style="align-self: self-start; max-width: 600px; margin: 0.3rem;">Преподаватель</label>
+                <select style="max-width: 600px; margin: 0.3rem;" id="educator" name="educator">
+                    {{#each educators as |educator|}}
+                        <option value="{{educator._id}}">{{educator.lastName}} {{educator.firstName}} {{educator.middleName}}</option>
+                    {{/each}}
+                </select>
+                
+                <label style="align-self: self-start; max-width: 600px; margin: 0.3rem;">Тип занятия</label>
+                <select style="max-width: 600px; margin: 0.3rem;" id="lessonsType" name="lessonsType">
+                    <option value="Лекция">Лекция</option>
+                    <option value="Семинар">Семинар</option>
+                    <option value="Лабораторная работа">Лабораторная работа</option>
+                    <option value="Консультация">Консультация</option>
+                    <option value="Курсовая работа">Курсовая работа</option>
+                    <option value="Индивидуальная работа">Индивидуальная работа</option>
+                </select>
+
+                <label style="align-self: self-start; max-width: 600px; margin: 0.3rem;">Количество часов</label>
+                <input style="max-width: 600px; margin: 0.3rem;" type="number" value="1" id="hours" required>
+
+
+            </div>
+            
+        </div>
+        <div class="modal-footer bg-light">
+            <button id="addHours" type="button" class="btn" data-dismiss="modal">Сохранить</button>
+            <button type="button" class="btn  btn-outline-secondary" data-dismiss="modal">Закрыть</button>
+        </div>
+        </div>
+    </div>
+    </div>
+
+<script>
+    jQuery(document).ready(function(){
+            
+        $("#addHours").on("click", async function(event){
+            
+
+            let educator = $("#educator").val();
+            let lessonsType = $("#lessonsType").val();
+            let hours = $("#hours").val();
+            
+            if (educator == "") return;
+            if (lessonsType == "") return;
+            if (hours == "") return;
+
+            hours = parseInt(hours);
+
+            let newHoursAndEducator = {
+                educator: educator,
+                lessonsType: lessonsType,
+                hours: hours
+            }
+
+            let newData = {
+                hoursAndEducators: newHoursAndEducator
+            }
+
+            let response = await fetch("/disciplines/" + "{{discipline._id}}", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(newData)
+            });
+
+            location.reload();
+
+        });
+    });
+
+    
+</script>
+
+</body>

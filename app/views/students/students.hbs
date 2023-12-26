@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Студенты</title>
+    <link href="style.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+</head>
+<body>
+    <h2>Студенты:</h2>
+    
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createStudentModal">
+        Добавить
+    </button>
+
+
+    <div class="modal fade" id="createStudentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Добавить преподавателя</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+
+            <div style="display: flex; flex-direction:column;">
+                <input style="max-width: 600px; margin: 0.3rem;" placeholder="Фамилия" type="text" id="lastName" required>
+                <input style="max-width: 600px; margin: 0.3rem;" placeholder="Имя" type="text" id="firstName" required>
+                <input style="max-width: 600px; margin: 0.3rem;" placeholder="Отчество" type="text" id="middleName" required>
+                
+                <label style="align-self: self-start; max-width: 600px; margin: 0.3rem;">Пол</label>
+                <select style="max-width: 600px; margin: 0.3rem;" id="gender" name="gender">
+                    <option value="M">Мужчина</option>
+                    <option value="F">Женщина</option>
+                </select>
+
+                <label style="align-self: self-start; max-width: 600px; margin: 0.3rem;">Группа</label>
+                <select style="max-width: 600px; margin: 0.3rem;" id="group" name="group">
+                    {{#each groups as |group|}}
+                        <option value="{{group._id}}" enrollmentYear="{{group.enrollmentYear}}">{{group.name}}</option>
+                    {{/each}}
+                </select>
+
+                <label style="align-self: self-start; max-width: 600px; margin: 0.3rem;">Дата рождения</label>
+                <input style="max-width: 600px; margin: 0.3rem;" placeholder="Дата рождения" type="date" id="birthDate" required>
+
+                <label style="align-self: self-start; max-width: 600px; margin: 0.3rem;">Стипендия</label>
+                <input style="max-width: 600px; margin: 0.3rem;" type="number" id="scholarship" required>
+
+                <label style="align-self: self-start; max-width: 600px; margin: 0.3rem;">Количество детей</label>
+                <input style="max-width: 600px; margin: 0.3rem;" placeholder="Количество детей" type="number" value="0" id="kidsCount" required>
+
+            </div>
+            
+        </div>
+        <div class="modal-footer bg-light">
+            <button id="createStudent" type="button" class="btn" data-dismiss="modal">Сохранить</button>
+            <button type="button" class="btn  btn-outline-secondary" data-dismiss="modal">Закрыть</button>
+        </div>
+        </div>
+    </div>
+    </div>
+    
+    <br>
+    <br>
+    
+    <table>
+        <tr>
+            <th>Фамилия</th>
+            <th>Имя</th>
+            <th>Отчество</th>
+            <th>Пол</th>
+            <th>Группа</th>
+            <th>Факультет</th>
+            <th>Курс</th>
+            <th>Дата рождения</th>
+            <th>Стипендия</th>
+            <th>Открыть</th>
+            <th>Удалить</th>
+        </tr>
+
+        {{#each students as |student|}}
+            <tr>
+                <td>{{student.lastName}}</td>
+                <td>{{student.firstName}}</td>
+                <td>{{student.middleName}}</td>
+                <td>{{student.gender}}</td>
+                <td>{{student.group.name}}</td>
+                <td>{{student.group.faculty.name}}</td>
+                <td>{{student.course}}</td>
+                <td>{{dateFormat student.birthDate "DD.MM.YYYY"}}</td>
+                <td>{{student.scholarship}}</td>
+                <td>
+                    <a href="/students/{{student._id}}">
+                        <button>Открыть</button>
+                    </a>
+                </td>
+                <td>
+                    <button name="toDeleteButton" toDeleteId="{{student._id}}">Удалить</button>
+                </td>
+            </tr>
+        {{/each}}
+
+    </table>
+
+    <script>
+
+        async function deleteOne(e){
+
+            let caller=e.target || e.srcElement;
+
+            let toDeleteId = caller.getAttribute('toDeleteId')
+            
+            await fetch("/students/"+toDeleteId, {
+                method: "DELETE"
+            })
+
+            location.reload()
+        }
+
+        let deleteButtons = document.getElementsByName("toDeleteButton").forEach(
+            (btn)=>{btn.addEventListener("click", deleteOne)}
+        );
+
+
+        jQuery(document).ready(function(){
+            
+            $("#createStudent").on("click", async function(event){
+                
+
+                let lastName = $("#lastName").val();
+                let firstName = $("#firstName").val();
+                let middleName = $("#middleName").val();
+                let birthDate = $("#birthDate").val();
+                let scholarship =  $("#scholarship").val();
+                let kidsCount = $("#kidsCount").val();
+                let gender = $("#gender").val();
+                let enrollmentYear = $("#group option:selected").attr("enrollmentyear");
+                let groupId = $("#group").val();
+
+                
+
+                let course = new Date();
+                course =  course.getMonth() >= 9 ? course.getFullYear() - parseInt(enrollmentYear) + 1 : course.getFullYear() - parseInt(enrollmentYear);
+                
+                console.log(enrollmentYear);
+                console.log(course);
+
+                if (lastName == "") return;
+                if (firstName == "") return;
+                if (middleName == "") return;
+                if (birthDate == "") return;
+                if (scholarship == "") return;
+                if (kidsCount == "") return;
+                if (gender == "") return;
+                if (groupId == "") return;
+                
+                scholarship = parseFloat(scholarship);
+
+                let newEducator = {
+                    lastName: lastName,
+                    firstName: firstName,
+                    birthDate: new Date(birthDate),
+                    scholarship: scholarship,
+                    gender: gender,
+                    groupId: groupId,
+                    course: course
+                }
+
+                if (kidsCount > 0) newEducator.kidsCount = kidsCount;
+                if (middleName != "") newEducator.middleName = middleName;
+
+                let response = await fetch("/students", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(newEducator)
+                });
+
+                location.reload();
+
+            });
+        });
+
+    </script>
+    
+</body>

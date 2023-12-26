@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Список статей</title>
+    <link href="style.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+
+    <div class="article-head">
+        <h2>Статья {{article.name}}</h2>
+        <h3>Опубликована: {{dateFormat article.datePublished "DD.MM.YYYY"}}</h3>
+        <h4>
+            Авторы: {{#each article.authors as |author|}}{{author}}{{#notEq (sum @index 1) ../article.authors.length}}, {{/notEq}}{{/each}}
+        </h4>
+        <h5>Теги: {{#each article.tags as |tag|}}{{tag}}{{#notEq (sum @index 1) ../article.tags.length}}, {{/notEq}}{{/each}}</h5>
+    </div>
+    
+    <div class="article-text">
+        <p>{{article.text}}</p>
+    </div>
+
+    <h3>Рецензии:</h3>
+
+
+    <div class="article-recensions">
+        
+        {{#each article.reviews as |review|}}
+
+            <div class="review-name">
+                <b>Имя: {{review.name}}</b>
+            </div>
+            <div class="review-score">
+                <b>Оценка: {{review.score}}</b>
+            </div>
+            <p class="review-content">{{review.text}}</p>
+            <br>
+        {{/each}}
+    </div>
+
+</body>
